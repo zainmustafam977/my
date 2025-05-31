@@ -1,28 +1,39 @@
 name: Deploy Tailscale
 
 on:
-  workflow_dispatch: # Allows manual triggering
+  workflow_dispatch:
   push:
-    branches: [main] # Or your preferred branch
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: windows-latest
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install Tailscale
-        run: |
-          # Add commands to install Tailscale if needed
-          # For example:
-          # Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe" -OutFile "tailscale-setup.exe"
-          # Start-Process -Wait -FilePath "tailscale-setup.exe" -ArgumentList "/S"
-
-      - name: Run Tailscale connection script
-        env:
-          TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
-        run: |
-          # Replace with your actual script name
-          powershell -File .\data\sc.ps1
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Install Tailscale
+      run: |
+        # Download and install Tailscale silently
+        $installerPath = "$env:RUNNER_TEMP\tailscale-setup.exe"
+        Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe" -OutFile $installerPath
+        Start-Process -Wait -FilePath $installerPath -ArgumentList "/S"
+        
+        # Add Tailscale to system PATH
+        $tailscalePath = "$env:ProgramFiles\Tailscale"
+        $env:PATH = "$tailscalePath;$env:PATH"
+        [System.Environment]::SetEnvironmentVariable("PATH", "$tailscalePath;$env:PATH", "Machine")
+        
+        # Verify installation
+        tailscale version
+        
+    - name: Run Tailscale connection script
+      env:
+        TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+      run: |
+        # Refresh PATH to ensure Tailscale is available
+        $env:PATH = [System.Environment]::GetEnvironmentVariable("PATH", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("PATH", "User")
+        
+        # Run script with full path
+        powershell -File "$env:GITHUB_WORKSPACE\data\sc.ps1"
