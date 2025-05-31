@@ -1,0 +1,28 @@
+name: Deploy Tailscale
+
+on:
+  workflow_dispatch: # Allows manual triggering
+  push:
+    branches: [main] # Or your preferred branch
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Tailscale
+        run: |
+          # Add commands to install Tailscale if needed
+          # For example:
+          # Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest.exe" -OutFile "tailscale-setup.exe"
+          # Start-Process -Wait -FilePath "tailscale-setup.exe" -ArgumentList "/S"
+
+      - name: Run Tailscale connection script
+        env:
+          TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
+        run: |
+          # Replace with your actual script name
+          powershell -File .\connect-tailscale.ps1
