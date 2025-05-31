@@ -25,4 +25,4 @@ jobs:
           TAILSCALE_AUTH_KEY: ${{ secrets.TAILSCALE_AUTH_KEY }}
         run: |
           # Replace with your actual script name
-          powershell -File .\sc.ps1
+          powershell -File .\data\sc.ps1
