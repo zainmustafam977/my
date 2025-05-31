@@ -1,7 +1,8 @@
+$authKey = $env:TAILSCALE_AUTH_KEY
 
 
 
-
+Write-Output $authKey
 
     # 3. Connect to Tailscale network
     Write-Output "[INFO] Connecting to Tailscale network..."
