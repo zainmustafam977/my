@@ -9,10 +9,23 @@ Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest
 Start-Process -FilePath "$env:TEMP\tailscale-setup.exe" -ArgumentList "/quiet" -NoNewWindow -Wait 
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 #Start-Process -FilePath "tailscale.exe" -ArgumentList "up --authkey tskey-auth-kDmVZv8Wr411CNTRL-W38EWMdmKoHAVMvJFC19oHPH2Ra4X1Yvb" -NoNewWindow -Wait
-$authKey = $env:TAILSCALE_AUTH_KEY
+#$authKey = $env:TAILSCALE_AUTH_KEY
 #tailscale up --auth-key=tskey-auth-kn8TU1m4GE11CNTRL-RWL3PgUvAtGbFetLC6N8tG7RLQkk6hSy --unattended
-tailscale up --authkey=$authKey --unattended
-tailscale status
+#tailscale up --authkey=$authKey --unattended
+#tailscale status
+#adding zerotier
+Invoke-WebRequest -Uri "https://download.zerotier.com/RELEASES/1.12.2/dist/ZeroTier%20One.msi" -OutFile "$env:USERPROFILE\Downloads\ZeroTier.msi"
+Start-Process "msiexec.exe" -ArgumentList "/i `"$env:USERPROFILE\Downloads\ZeroTier.msi`" /qn" -Wait
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+
+choco install zerotier-one -y
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
+zerotier-cli join "8bd5124fd6abcf8f"
+
 Get-Service Tailscale | Set-Service -StartupType Automatic
 Remove-Item -Path "C:\Program Files\Tailscale\tailscale-ipn.exe" -Force
 Rename-Item -Path "C:\Program Files\Tailscale\tailscale-ipn.exe" -NewName "tailscale-ipn.disabled"
