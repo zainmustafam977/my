@@ -1,12 +1,25 @@
+# Get auth key from environment
 $authKey = $env:TAILSCALE_AUTH_KEY
 
+# Debug output (remove in production)
+Write-Output "Auth key: $($authKey ? '*****' + $authKey.Substring($authKey.Length - 4) : 'NOT FOUND')"
 
+try {
+    # 1. Verify Tailscale executable is available
+    $tailscalePath = Get-Command tailscale -ErrorAction Stop | Select-Object -ExpandProperty Source
+    Write-Output "[INFO] Tailscale found at: $tailscalePath"
 
-Write-Output $authKey
+    # 2. Validate auth key
+    if (-not $authKey) {
+        throw "TAILSCALE_AUTH_KEY environment variable not set"
+    }
+    if (-not $authKey.StartsWith("tskey-auth-")) {
+        throw "Invalid Tailscale auth key format"
+    }
 
     # 3. Connect to Tailscale network
     Write-Output "[INFO] Connecting to Tailscale network..."
-     tailscale up --auth-key=$authKey --unattended
+    & tailscale up --auth-key=$authKey --unattended
     
     if ($LASTEXITCODE -ne 0) {
         throw "Tailscale connection failed with exit code $LASTEXITCODE"
@@ -21,8 +34,6 @@ Write-Output $authKey
     Write-Output "[SUCCESS] Tailscale connected successfully!"
     Write-Output "Tailscale IP: $($status.Self.TailscaleIPs[0])"
     Write-Output "Peer count: $(@($status.Peer).Count)"
-    
-    exit 0
 }
 catch {
     Write-Output "[ERROR] $_"
@@ -41,3 +52,5 @@ catch {
     
     exit 1
 }
+
+exit 0
