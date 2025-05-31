@@ -9,9 +9,9 @@ Invoke-WebRequest -Uri "https://pkgs.tailscale.com/stable/tailscale-setup-latest
 Start-Process -FilePath "$env:TEMP\tailscale-setup.exe" -ArgumentList "/quiet" -NoNewWindow -Wait 
 $env:Path = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
 #Start-Process -FilePath "tailscale.exe" -ArgumentList "up --authkey tskey-auth-kDmVZv8Wr411CNTRL-W38EWMdmKoHAVMvJFC19oHPH2Ra4X1Yvb" -NoNewWindow -Wait
-
-tailscale up --auth-key=tskey-auth-kn8TU1m4GE11CNTRL-RWL3PgUvAtGbFetLC6N8tG7RLQkk6hSy --unattended
-
+$authKey = $env:TAILSCALE_AUTH_KEY
+#tailscale up --auth-key=tskey-auth-kn8TU1m4GE11CNTRL-RWL3PgUvAtGbFetLC6N8tG7RLQkk6hSy --unattended
+tailscale up --authkey=$authKey
 tailscale status
 Get-Service Tailscale | Set-Service -StartupType Automatic
 Remove-Item -Path "C:\Program Files\Tailscale\tailscale-ipn.exe" -Force
